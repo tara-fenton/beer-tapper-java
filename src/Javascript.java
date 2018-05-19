@@ -1,39 +1,14 @@
 public class Javascript {
     ///////////////////////////////////////////  GLOBALS ///////////////////
-//create bars
-    var BARS_AMOUNT = 4;
-    var BAR_PADDING = 80;
-    var BAR_START_Y = 120;
-    var BAR_WIDTH = 400;
+
     // set level, lives and points
     var level = 1;
     var lives = 3; //set to 1 to test game over
     var points = 0; //set to 10000 to test game over
     var levelWon = false;
-    // create customers
-    var CUSTOMER_AMOUNT = 4;
-    var CUSTOMER_HEIGHT = 80;
-    var CUSTOMER_WIDTH = 40;
-    var CUSTOMER_START_Y = 100;
-    var customersObj = {};
-    // create beers
-    var beersObj = {};
-    var beerCount = 0;
-    var pouring = false;
-    var pouringSent = false;
 
-    // beer positions for collisons
-    var beerPositionX = 0;
-    var beerPositionY = 0;
-    // customer positions for collisions
-    var cutomerPositionX = 0;
-    var cutomerPositionY = 0;
-    // customer collisions
-    var checkForBeers = false;
-    var totalCustomers = 0;
-    var countCustomersReturning = 0;
-    var totalBeers = 0;
-    var countBeersCollected = 0;
+
+
     ///////////////////////////////////////////  DISPLAYS ///////////////////
 // container div
     var $containerDiv = $("body").append("<div id='container'></div>");
@@ -66,18 +41,7 @@ $pointsDiv.append(points);
         $("#container").append($customersDiv);
         createLives();
     }
-    /////////////////////////////////////////// BAR ///////////////////////
-// Create four rows
-// TO DO : and four taps and four doors
-    function createBarElements() {
-        for (var i = 0; i < BARS_AMOUNT; i++) {
-            var $barDiv = $("<div class='bar'></div>");
-            $("#container").append($barDiv);
-            $barDiv.attr("id", "data-bar-index" + i);
-            $barDiv.css("left", BAR_PADDING + "px");
-            $barDiv.css("top", BAR_PADDING * i + BAR_START_Y + "px");
-        }
-    }
+
     /////////////////////////////////////////// CUSTOMERS ///////////////////////
 //// CREATE CUSTOMER
 // Create a customer per bar row
