@@ -1,7 +1,6 @@
 import processing.core.PApplet;
 
 import static java.awt.Event.CAPS_LOCK;
-import static java.awt.Event.UP;
 
 public class MainClass extends PApplet {
 
@@ -13,23 +12,25 @@ public class MainClass extends PApplet {
         PApplet.main("MainClass", args);
     }
 
-    Beer beer;
     Bar bar;
-    Customer customer;
     Bartender bartender;
+    Customer[] customers = new Customer[4];
+    Beer beer;
 
     public void setup(){
         processing = this;
 
         bar = new Bar();
 
-        customer = new Customer();
+        bartender = new Bartender();
+        downLimit = Bartender.getStartY() + Bar.getPadding() * Bar.getAmount();
+
+        // make 4 customers
+        for (int i = 0; i < 4; i++) {
+            customers[i] = new Customer(Bartender.getStartY() + Bar.getPadding() * i );
+        }
 
         beer = new Beer();
-
-        bartender = new Bartender();
-
-        downLimit = Bartender.getStartY() + Bar.getPadding() * Bar.getAmount();
     }
     public void settings() {
         size(800, 600);
@@ -43,14 +44,15 @@ public class MainClass extends PApplet {
         beer.draw();
 
         bar.setup();
-
-        customer.setup();
-        customer.draw();
+        // make customers move
+        for (int i = 0; i < 4; i++) {
+            customers[i].draw();
+        }
 
         bartender.draw();
     }
 
-
+    // bartender movement - why do i have to call the class rather than the instance?
     public void keyPressed() {
         if (key == CODED) {
             if (keyCode == UP || keyCode == CAPS_LOCK || keyCode == RETURN) {
@@ -82,7 +84,7 @@ public class MainClass extends PApplet {
                     Bartender.setCurrentX(Bartender.getStartX());
                 }
             }
-            // a doesn't work for now
+            // 'a' doesn't work for now
             if (keyCode == LEFT || key == 'a'){
                 // move the bartender left
                 Bartender.setCurrentX(Bartender.getCurrentX() - 5);
@@ -92,7 +94,7 @@ public class MainClass extends PApplet {
                     Bartender.setCurrentX(Bar.getStartX());
                 }
             }
-            // s doesn't work for now
+            // 's' doesn't work for now
             if (keyCode == RIGHT || key == 's'){
                 // move the bartender right
                 Bartender.setCurrentX(Bartender.getCurrentX() + 5);
