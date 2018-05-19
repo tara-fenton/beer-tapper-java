@@ -64,7 +64,7 @@ public class MainClass extends PApplet {
         // space bar
         if (key == ' ') {
             // create a beer
-            hashMap.put("beer"+beerCount, new Beer(Bartender.getCurrentX()));
+            hashMap.put("beer"+beerCount, new Beer(Bartender.getCurrentX(),Bartender.getCurrentY()));
             beerCount++;
         }
         if (key == CODED) {
