@@ -328,27 +328,7 @@ $pointsDiv.append(points);
                 // jump back to tap by pouring (space bar)
                 $bartenderDiv.css("left", BARTENDER_START_X + "px");
                 break;
-            case 37: //left key LEFT //////////////////////////////
-            case 65: //   a key LEFT //////////////////////////////
-                newXbartender = currentXbartender - 5;
-                // restrict from moving past the left of bar
-                if (newXbartender < BAR_PADDING) {
-                    newXbartender = BAR_PADDING;
-                }
-                newXbartender += "px";
-                $bartenderDiv.css("left", newXbartender);
-                // TO DO : catch a beer glass
-                break;
-            case 39: // right key RIGHT //////////////////////////////
-            case 83: //     s key RIGHT //////////////////////////////
-                newXbartender = currentXbartender + 5;
-                // restrict from moving past the right
-                if (newXbartender > BARTENDER_START_X) {
-                    newXbartender = BARTENDER_START_X;
-                }
-                newXbartender += "px";
-                $bartenderDiv.css("left", newXbartender);
-                break;
+
             case 13: //return key UP //////////////////////////////
             case 20: //  caps key UP //////////////////////////////
             case 38: //     arrow UP //////////////////////////////

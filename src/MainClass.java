@@ -43,7 +43,6 @@ public class MainClass extends PApplet {
         beer.draw();
 
         bar.setup();
-        bar.draw();
 
         customer.setup();
         customer.draw();
@@ -62,19 +61,13 @@ public class MainClass extends PApplet {
                 if(Bartender.getCurrentY() < Bartender.getStartY()){
                     Bartender.setCurrentY(Bartender.getStartY() + Bar.getPadding() * (Bar.getAmount() - 1));
                 }
-//                    if (newYbartender < BARTENDER_START_Y) {
-//                        newYbartender =
-//                                BARTENDER_START_Y + BAR_PADDING * BARS_AMOUNT + Bartender.getHeight() / 2;
-//                    }
-//                    // set the y position of bartender
-//                    newYbartender += "px";
-//                    $bartenderDiv.css("top", newYbartender);
-//                    // set the x position of the bartender
-//                    $bartenderDiv.css("left", BARTENDER_START_X);
-//                    // TO DO : stop pouring by moving to another row
-//                    break;
 
+                // check if bartender needs to get sent back to tap
+                if(Bartender.getCurrentX() < Bartender.getStartX()){
+                    Bartender.setCurrentX(Bartender.getStartX());
+                }
             }
+
             if (keyCode == DOWN || keyCode == SHIFT){
                 // move the bartender down
                 Bartender.setCurrentY(Bartender.getCurrentY() + Bar.getPadding());
@@ -82,6 +75,31 @@ public class MainClass extends PApplet {
                 // check if bartender needs to loop around from the bottom to the top
                 if (Bartender.getCurrentY() >= downLimit) {
                     Bartender.setCurrentY(Bartender.getStartY());
+                }
+
+                // check if bartender needs to get sent back to tap
+                if(Bartender.getCurrentX() < Bartender.getStartX()){
+                    Bartender.setCurrentX(Bartender.getStartX());
+                }
+            }
+            // a doesn't work for now
+            if (keyCode == LEFT || key == 'a'){
+                // move the bartender left
+                Bartender.setCurrentX(Bartender.getCurrentX() - 5);
+
+                // restrict from moving past the left of bar
+                if (Bartender.getCurrentX() < Bar.getStartX()) {
+                    Bartender.setCurrentX(Bar.getStartX());
+                }
+            }
+            // s doesn't work for now
+            if (keyCode == RIGHT || key == 's'){
+                // move the bartender right
+                Bartender.setCurrentX(Bartender.getCurrentX() + 5);
+
+                // restrict from moving past the right
+                if (Bartender.getCurrentX() > Bartender.getStartX()) {
+                    Bartender.setCurrentX(Bartender.getStartX());
                 }
             }
         }
