@@ -63,6 +63,10 @@ public class MainClass extends PApplet {
     public void keyPressed() {
         // space bar
         if (key == ' ') {
+            // check if bartender needs to get sent back to tap
+            if(Bartender.getCurrentX() < Bartender.getStartX()){
+                Bartender.setCurrentX(Bartender.getStartX());
+            }
             // create a beer
             hashMap.put("beer"+beerCount, new Beer(Bartender.getCurrentX(),Bartender.getCurrentY()));
             beerCount++;

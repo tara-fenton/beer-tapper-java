@@ -1,5 +1,4 @@
 import processing.core.PApplet;
-import processing.core.PGraphics;
 
 public class Bartender {
 
@@ -12,16 +11,11 @@ public class Bartender {
     private static int currentY = BARTENDER_START_Y;
 
     private static PApplet p = MainClass.processing;
-    private static PGraphics pg = p.createGraphics(BARTENDER_WIDTH,BARTENDER_HEIGHT);
-
 
     public void draw(){
-        pg.beginDraw();
-        pg.background(196,37,215);
-        pg.noStroke();
-        pg.rect(currentX,currentY,BARTENDER_WIDTH,BARTENDER_HEIGHT);
-        pg.endDraw();
-        p.image(pg, currentX,currentY,BARTENDER_WIDTH,BARTENDER_HEIGHT);
+        p.fill(196,37,215);
+        p.noStroke();
+        p.rect(currentX,currentY,BARTENDER_WIDTH,BARTENDER_HEIGHT);
     }
 
     public static int getStartX(){

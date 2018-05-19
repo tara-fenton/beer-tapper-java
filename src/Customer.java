@@ -20,7 +20,7 @@ public class Customer {
 
 
         if (CUSTOMER_X < 600) {
-            CUSTOMER_X = CUSTOMER_X + 0.8;
+            CUSTOMER_X = CUSTOMER_X + 0.2;
         }
     }
 
