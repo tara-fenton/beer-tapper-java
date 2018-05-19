@@ -7,6 +7,7 @@ public class MainClass extends PApplet {
 
     //reference to processing
     public static PApplet processing;
+    private static int downLimit;
 
     public static void main(String [] args) {
         PApplet.main("MainClass", args);
@@ -27,6 +28,8 @@ public class MainClass extends PApplet {
         beer = new Beer();
 
         bartender = new Bartender();
+
+        downLimit = Bartender.getStartY() + Bar.getPadding() * Bar.getAmount();
     }
     public void settings() {
         size(800, 600);
@@ -45,20 +48,20 @@ public class MainClass extends PApplet {
         customer.setup();
         customer.draw();
 
-        bartender.setup();
         bartender.draw();
     }
+
 
     public void keyPressed() {
         if (key == CODED) {
             if (keyCode == UP || keyCode == CAPS_LOCK || keyCode == RETURN) {
-                System.out.println("pressed: " + Bartender.getCurrentYbartender());
-//                System.out.println("pressed: " + Bar.getPadding());
-//                System.out.println("pressed: " + Bartender.getHeight());
+                // move the bartender up
+                Bartender.setCurrentY(Bartender.getCurrentY() - Bar.getPadding());
 
-                    Bartender.setCurrentYbartender(Bartender.getCurrentYbartender() - Bar.getPadding() - Bartender.getHeight() / 2);
-
-                    // loop around from the top to the bottom
+                // check if bartender needs to loop around from the top to the bottom
+                if(Bartender.getCurrentY() < Bartender.getStartY()){
+                    Bartender.setCurrentY(Bartender.getStartY() + Bar.getPadding() * (Bar.getAmount() - 1));
+                }
 //                    if (newYbartender < BARTENDER_START_Y) {
 //                        newYbartender =
 //                                BARTENDER_START_Y + BAR_PADDING * BARS_AMOUNT + Bartender.getHeight() / 2;
@@ -73,23 +76,13 @@ public class MainClass extends PApplet {
 
             }
             if (keyCode == DOWN || keyCode == SHIFT){
+                // move the bartender down
+                Bartender.setCurrentY(Bartender.getCurrentY() + Bar.getPadding());
 
-//                    newYbartender = currentYbartender + BAR_PADDING + BARTENDER_HEIGHT / 2;
-//
-//                    // loop around from the bottom to the top and from the top to the bottom
-//                    var downLimit =
-//                            BARTENDER_START_Y +
-//                                    BAR_PADDING * (BARS_AMOUNT + 1) +
-//                                    BARTENDER_HEIGHT / 2;
-//                    if (newYbartender >= downLimit) {
-//                        newYbartender = BARTENDER_START_Y;
-//                    }
-//                    // set the y position of bartender
-//                    newYbartender += "px";
-//                    $bartenderDiv.css("top", newYbartender);
-//                    // set the x position of the bartender
-//                    $bartenderDiv.css("left", BARTENDER_START_X);
-                    // TO DO : stop pouring by moving to another row
+                // check if bartender needs to loop around from the bottom to the top
+                if (Bartender.getCurrentY() >= downLimit) {
+                    Bartender.setCurrentY(Bartender.getStartY());
+                }
             }
         }
     }

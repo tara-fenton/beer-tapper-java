@@ -39,7 +39,7 @@ public class Beer {
         p.image(pg, BEER_START_X,BEER_START_Y,BEER_WIDTH,BEER_HEIGHT);
 
 
-        BEER_START_Y = BEER_START_Y +2;
+//        BEER_START_Y = BEER_START_Y +2;
 //        System.out.println("hi");
     }
 }
