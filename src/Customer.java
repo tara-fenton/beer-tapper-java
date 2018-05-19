@@ -2,11 +2,10 @@ import processing.core.PApplet;
 
 public class Customer {
 
-    private static int y;
-    private static double CUSTOMER_START_X = 140;
-    private static int CUSTOMER_WIDTH = 40;
-    private static int CUSTOMER_HEIGHT = 80;
-    private int currentY = 0;
+    private static double CUSTOMER_X = 140;
+    private int CUSTOMER_WIDTH = 40;
+    private int CUSTOMER_HEIGHT = 80;
+    private int currentY;
 
     public Customer(int y){
         currentY = y;
@@ -17,9 +16,12 @@ public class Customer {
     public void draw(){
         p.fill(256,0,0);
         p.noStroke();
-        p.rect((int) CUSTOMER_START_X,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
+        p.rect((int) CUSTOMER_X,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
 
-        CUSTOMER_START_X = CUSTOMER_START_X + 0.8;
+
+        if (CUSTOMER_X < 600) {
+            CUSTOMER_X = CUSTOMER_X + 0.8;
+        }
     }
 
 

@@ -1,5 +1,7 @@
 import processing.core.PApplet;
 
+import java.util.HashMap;
+
 import static java.awt.Event.CAPS_LOCK;
 
 public class MainClass extends PApplet {
@@ -12,10 +14,12 @@ public class MainClass extends PApplet {
         PApplet.main("MainClass", args);
     }
 
-    Bar bar;
-    Bartender bartender;
-    Customer[] customers = new Customer[4];
-    Beer beer;
+    private Bar bar;
+    private Bartender bartender;
+    private Customer[] customers = new Customer[4];
+
+    private static HashMap<String, Beer> hashMap = new HashMap<>();
+    private int beerCount = 0;
 
     public void setup(){
         processing = this;
@@ -29,9 +33,8 @@ public class MainClass extends PApplet {
         for (int i = 0; i < 4; i++) {
             customers[i] = new Customer(Bartender.getStartY() + Bar.getPadding() * i );
         }
-
-        beer = new Beer();
     }
+
     public void settings() {
         size(800, 600);
     }
@@ -40,20 +43,30 @@ public class MainClass extends PApplet {
 
         processing.background(0);
 
-        beer.setup();
-        beer.draw();
-
         bar.setup();
+
+        bartender.draw();
+
         // make customers move
         for (int i = 0; i < 4; i++) {
             customers[i].draw();
         }
 
-        bartender.draw();
+        // make beers move
+        for (String key : hashMap.keySet()) {
+            hashMap.get(key).draw();
+        }
+
     }
 
     // bartender movement - why do i have to call the class rather than the instance?
     public void keyPressed() {
+        // space bar
+        if (key == ' ') {
+            // create a beer
+            hashMap.put("beer"+beerCount, new Beer(Bartender.getCurrentX()));
+            beerCount++;
+        }
         if (key == CODED) {
             if (keyCode == UP || keyCode == CAPS_LOCK || keyCode == RETURN) {
                 // move the bartender up
