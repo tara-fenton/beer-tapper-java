@@ -58,6 +58,4 @@ public class Customer {
     public boolean setMovingForward(boolean value){
         return isMovingForward = value;
     }
-
-
 }

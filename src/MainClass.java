@@ -1,6 +1,6 @@
 import processing.core.PApplet;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.awt.Event.CAPS_LOCK;
 
@@ -18,10 +18,12 @@ public class MainClass extends PApplet {
     private Bartender bartender;
     private Customer[] customers;
     private int customerAmount = 4;
+    private int returningCustomers = 0;
 
-    private static HashMap<String, Beer> hashMap = new HashMap<>();
+    private ConcurrentHashMap<String, Beer> hashMap = new ConcurrentHashMap<>();
     private int beerCount = 0;
 
+    private GetReady getReady;
     private Lives lives;
     private Points points;
     private Level level;
@@ -34,13 +36,14 @@ public class MainClass extends PApplet {
         bartender = new Bartender();
         downLimit = Bartender.getStartY() + Bar.getPadding() * Bar.getAmount();
 
+        getReady = new GetReady(0);
         lives = new Lives(3);
         points = new Points(0);
         level = new Level(1);
 
         customers = new Customer[customerAmount*level.getLevel()];
 
-        // make 4 customers
+        // make customers
         for (int i = 0; i < customerAmount*level.getLevel(); i++) {
             customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
         }
@@ -53,100 +56,137 @@ public class MainClass extends PApplet {
     public void draw() {
 
         processing.background(0);
+level.setReady(true);
+        if (!level.getReady()) {
+            bar.setup();
 
-        bar.setup();
+            bartender.draw();
 
-        bartender.draw();
+            // make customers move
+            for (int i = 0; i < customerAmount * level.getLevel(); i++)
+                if (Bartender.getAlive()) {
+                    // check if moving forward boolean is true
+                    if (customers[i].getMovingForward()) {
+                        customers[i].moveForward();
 
-        // make customers move
-        for (int i = 0; i < 4; i++)
-            if(Bartender.getAlive()) {
-                // check if moving forward boolean is true
-                if (customers[i].getMovingForward()) {
-                    customers[i].moveForward();
-
-                    for (String key : hashMap.keySet()) {
-                        // check if beers collide with customer
-                        if (customers[i].getCurrentX() + 40 > hashMap.get(key).getCurrentX() &&
-                                customers[i].getCurrentY() == hashMap.get(key).getCurrentY() - 10) {
-                            customers[i].setMovingForward(false);
-                            hashMap.get(key).setMovingForward(false);
-                            // 50 Points for each saloon patron you send off his aisle
-                            points.setPoints(points.getPoints()+50);
+                        for (String key : hashMap.keySet()) {
+                            // check if beers collide with customer
+                            if (customers[i].getCurrentX() + 40 > hashMap.get(key).getCurrentX() &&
+                                    customers[i].getCurrentY() == hashMap.get(key).getCurrentY() - 10) {
+                                customers[i].setMovingForward(false);
+                                hashMap.get(key).setMovingForward(false);
+                                // 50 Points for each saloon patron you send off his aisle
+                                points.setPoints(points.getPoints() + 50);
+                            }
+                            // check if beer reaches the end of the bar
+                            if (hashMap.get(key).getCurrentX() > Bar.getEnd()) {
+                                //kill bartender
+                                Bartender.setAlive(false);
+                                lives.setLives(lives.getLives() - 1);
+                            }
                         }
-                        // check if beer reaches the end of the bar
-                        if (hashMap.get(key).getCurrentX() > Bar.getEnd()) {
+                        // check if customer reaches the end of the bar
+                        if (customers[i].getCurrentX() > Bar.getEnd()) {
                             //kill bartender
                             Bartender.setAlive(false);
-                            lives.setLives(lives.getLives()-1);
+                            lives.setLives(lives.getLives() - 1);
+                        }
+                        // else - moving forward boolean is false, customers moving backward to beginning of bar
+                    } else {
+                        if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
+                        // count the number of returning customers
+                        returningCustomers++;
+                    }
+                } else {
+                    // stop customers
+                    customers[i].stop();
+                }
+
+
+            // make beers move
+            for (String key : hashMap.keySet()) {
+                // check if bartender is alive and beer is not collected
+                if (Bartender.getAlive() && !hashMap.get(key).getCollected()) {
+                    // check if beer is moving forward boolean is true
+                    if (hashMap.get(key).getMovingForward()) {
+                        hashMap.get(key).moveForward();
+                        // check if it reaches the end without colliding with customer
+                        if (hashMap.get(key).getCurrentX() < Bar.getStartX()) {
+                            //kill bartender
+                            Bartender.setAlive(false);
+                            lives.setLives(lives.getLives() - 1);
                         }
                     }
-                    // check if customer reaches the end of the bar
-                    if (customers[i].getCurrentX() > Bar.getEnd()) {
-                        //kill bartender
-                        Bartender.setAlive(false);
-                        lives.setLives(lives.getLives()-1);
+                    // beer moving forward boolean is false - going back to bartender
+                    else {
+                        // check if bartender collides to collect glass
+                        if (hashMap.get(key).getCurrentX() + 15 > Bartender.getCurrentX() &&
+                                hashMap.get(key).getCurrentY() - 10 == Bartender.getCurrentY()) {
+                            hashMap.get(key).setCollected(true);
+                            // 100 Points for each empty mug you pick up
+                            points.setPoints(points.getPoints() + 100);
+                            // else if - check if beer reached the end of the bar without bartender collecting
+                        } else if (hashMap.get(key).getCurrentX() > Bar.getEnd()) {
+                            //kill bartender
+                            Bartender.setAlive(false);
+                            lives.setLives(lives.getLives() - 1);
+                            // else - keep moving it toward the bartender
+                        } else {
+                            hashMap.get(key).moveBackward();
+                        }
                     }
+                    // check if beer is collected
                 } else {
-                    // moving forward boolean is false NOT sure what this does
-                    if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
-                    // check if customer reaches the end of the bar
-                    // if (customers[i].getCurrentX() )
-                }
-            } else {
-                // stop beers
-                customers[i].stop();
-            }
+                    if (hashMap.get(key).getCollected()) {
+                        hashMap.get(key).empty();
+                        //remove beer from hashmap causes ConcurrentModificationException error?
+                        //hashMap.remove(key);
 
-        // make beers move
-        for (String key : hashMap.keySet()) {
-            // check if bartender is alive and beer is not collected
-            if(Bartender.getAlive() && !hashMap.get(key).getCollected()) {
-                // check if beer is moving forward boolean is true
-                if (hashMap.get(key).getMovingForward()) {
-                    hashMap.get(key).moveForward();
-                    // check if it reaches the end without colliding with customer
-                    if(hashMap.get(key).getCurrentX() < Bar.getStartX()){
-                        //kill bartender
-                        Bartender.setAlive(false);
-                        lives.setLives(lives.getLives()-1);
-                    }
-                }
-                // beer moving forward boolean is false - going back to bartender
-                else {
-                    // check if bartender collides to collect glass
-                    if (hashMap.get(key).getCurrentX() + 15 > Bartender.getCurrentX() &&
-                            hashMap.get(key).getCurrentY() - 10 == Bartender.getCurrentY()){
-                        hashMap.get(key).setCollected(true);
-                        // 100 Points for each empty mug you pick up
-                        points.setPoints(points.getPoints()+100);
-                        // else if - check if beer reached the end of the bar without bartender collecting
-                    } else if (hashMap.get(key).getCurrentX() > Bar.getEnd()){
-                        //kill bartender
-                        Bartender.setAlive(false);
-                        lives.setLives(lives.getLives()-1);
-                        // else - keep moving it toward the bartender
                     } else {
-                        hashMap.get(key).moveBackward();
+                        // stop beers, bartender killed
+                        hashMap.get(key).stop();
                     }
                 }
-            // check if beer is collected
-            } else {
-                if (hashMap.get(key).getCollected()){
-                    hashMap.get(key).empty();
-                    //remove beer from hashmap causes ConcurrentModificationException error?
-                    //hashMap.remove(key);
-
-                } else {
-                    // stop beers, bartender killed
-                    hashMap.get(key).stop();
-                }
             }
-        }
 
-        lives.draw();
-        points.draw();
-        level.draw();
+
+            lives.draw();
+            points.draw();
+            level.draw();
+
+            // check if all customers are returning - WON LEVEL
+            if (returningCustomers == customerAmount * level.getLevel()) {
+//                level.setLevel(level.getLevel()+1);
+                level.setReady(true);
+//                returningCustomers = 0;
+                getReady.setTime(0);
+                // make new customers
+                for (int i = 0; i < customerAmount*level.getLevel(); i++) {
+                    customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
+                }
+                // remove all beers
+                for (String key : hashMap.keySet()) {
+                    hashMap.remove(key);
+                }
+
+                beerCount = 0;
+
+            } else returningCustomers = 0;
+        } else {
+
+            displayGetReady();
+        }
+    }
+
+    public void displayGetReady() {
+        // draw ready to serve timer
+        if (getReady.getTime() < 1000){
+            getReady.draw();
+            getReady.setTime(getReady.getTime()+1);
+        } else {
+            level.setReady(false);
+            returningCustomers = 0;
+        }
     }
 
     // bartender movement - why do i have to call the class rather than the instance?

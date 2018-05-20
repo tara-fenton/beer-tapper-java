@@ -42,7 +42,7 @@ public class Beer {
     }
 
     public void empty(){
-        // erase
+        // disappear
         p.rect(0,0,0,0);
     }
 

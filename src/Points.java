@@ -11,8 +11,8 @@ public class Points {
 
     public void draw(){
         p.textSize(32);
-        p.text(amount, 10, 30);
-        p.fill(0, 102, 153);
+        p.fill(256, 256, 256);
+        p.text(amount, 20, 40);
     }
 
     public int getPoints() {
