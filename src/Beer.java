@@ -23,6 +23,8 @@ public class Beer {
         if (currentX > Bar.getStartX()) {
             currentX = currentX - 1;
         }
-
+    }
+    public int getCurrentX() {
+        return this.currentX;
     }
 }

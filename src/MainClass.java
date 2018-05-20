@@ -31,7 +31,7 @@ public class MainClass extends PApplet {
 
         // make 4 customers
         for (int i = 0; i < 4; i++) {
-            customers[i] = new Customer(Bartender.getStartY() + Bar.getPadding() * i );
+            customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
         }
     }
 
@@ -48,9 +48,19 @@ public class MainClass extends PApplet {
         bartender.draw();
 
         // make customers move
-        for (int i = 0; i < 4; i++) {
-            customers[i].draw();
-        }
+        for (int i = 0; i < 4; i++)
+            if (customers[i].isMovingForward()) {
+                customers[i].moveForward();
+                // make beers move
+//                for (String key : hashMap.keySet()) {
+//                    hashMap.get(key).getCurrentX();
+//                }
+                // so it only sets it once its less than 200
+                if (customers[i].getCurrentX() > 600) customers[i].setMovingForward(false);
+            } else {
+                if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
+
+            }
 
         // make beers move
         for (String key : hashMap.keySet()) {
