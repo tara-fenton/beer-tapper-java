@@ -16,7 +16,7 @@ public class MainClass extends PApplet {
 
     private Bar bar;
     private Bartender bartender;
-    private Customer[] customers;
+    private ConcurrentHashMap<String, Customer> customers = new ConcurrentHashMap<>();
     private int customerAmount = 4;
     private int returningCustomers = 0;
 
@@ -45,8 +45,6 @@ public class MainClass extends PApplet {
         points = new Points(0);
         level = new Level(1);
 
-        customers = new Customer[customerAmount*level.getLevel()];
-
         setLevelUp();
     }
 
@@ -55,7 +53,8 @@ public class MainClass extends PApplet {
         getReady.setTime(0);
         // make customers
         for (int i = 0; i < customerAmount*level.getLevel(); i++) {
-            customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
+            customers.put("customers"+i, new Customer(Customer.getStartX(),
+                    Bartender.getStartY() + Bar.getPadding() * i ));
         }
         returningCustomers = 0;
 
@@ -110,21 +109,22 @@ public class MainClass extends PApplet {
     * */
     public void makeCustomersMove(){
         // make each customer move
-        for (int i = 0; i < customerAmount * level.getLevel(); i++)
+        for (String customer : customers.keySet())
             // check if bartender is alive
             if (Bartender.getAlive()) {
                 // check if customer is moving forward is true
-                if (customers[i].getMovingForward()) {
+                if (customers.get(customer).getMovingForward()) {
+
                     // draw customer
-                    customers[i].moveForward();
+                    customers.get(customer).moveForward();
 
                     // for each beer for each customer
                     for (String key : beers.keySet()) {
                         // check if beers collide with customer
-                        if (customers[i].getCurrentX() + 40 > beers.get(key).getCurrentX() &&
-                                customers[i].getCurrentY() == beers.get(key).getCurrentY() - 10) {
+                        if (customers.get(customer).getCurrentX() + 40 > beers.get(key).getCurrentX() &&
+                                customers.get(customer).getCurrentY() == beers.get(key).getCurrentY() - 10) {
                             // set customer moving to bartender false
-                            customers[i].setMovingForward(false);
+                            customers.get(customer).setMovingForward(false);
                             // set  beer moving towards customer to false
                             beers.get(key).setMovingForward(false);
                             // 50 Points for each saloon patron you send off his aisle
@@ -138,21 +138,21 @@ public class MainClass extends PApplet {
                         }
                     }
                     // check if customer reaches the end of the bar
-                    if (customers[i].getCurrentX() > Bar.getEnd()) {
+                    if (customers.get(customer).getCurrentX() > Bar.getEnd()) {
                         //kill bartender
                         Bartender.setAlive(false);
                         lives.setLives(lives.getLives() - 1);
                     }
                     // else - customer is moving forward is false, customers moving backward to beginning of bar
                 } else {
-                    if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
+                    if (customers.get(customer).getCurrentX() > Bar.getStartX()) customers.get(customer).moveBackward();
                     // count the number of returning customers
                     returningCustomers++;
                 }
                 // else - the bartender died, what to do??
             } else {
                 // stop customers
-                customers[i].stop();
+                customers.get(customer).stop();
             }
     }
 
