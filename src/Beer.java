@@ -7,6 +7,7 @@ public class Beer {
     private int currentX;
     private int currentY;
     private boolean isMovingForward = true;
+    private boolean isCollected = false;
 
     private static PApplet p = MainClass.processing;
 
@@ -21,9 +22,7 @@ public class Beer {
         p.noStroke();
         p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 
-//        if (currentX > Bar.getStartX()) {
-            currentX = currentX - 1;
-//        }
+        currentX = currentX - 1;
     }
 
     public void moveBackward(){
@@ -32,16 +31,19 @@ public class Beer {
         p.noStroke();
         p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 
-//        if (currentX > Bar.getStartX()) {
         currentX = currentX + 1;
-//        }
     }
+
     public void stop(){
         // red
         p.fill(256,0,0);
         p.noStroke();
         p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
+    }
 
+    public void empty(){
+        // erase
+        p.rect(0,0,0,0);
     }
 
     public int getCurrentX() {
@@ -56,5 +58,12 @@ public class Beer {
     }
     public boolean setMovingForward(boolean value){
         return isMovingForward = value;
+    }
+
+    public boolean getCollected() {
+        return isCollected;
+    }
+    public boolean setCollected(boolean value){
+        return isCollected = value;
     }
 }

@@ -24,6 +24,7 @@ public class Customer {
 
         this.currentX = this.currentX + 0.5;
     }
+
     public void moveBackward(){
         // green
         p.fill(0, 256, 0);
@@ -32,13 +33,14 @@ public class Customer {
 
         this.currentX = this.currentX - 0.5;
     }
+
     public void stop(){
         // red
         p.fill(256,0,0);
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
-
     }
+
     public static double getStartX(){
         return CUSTOMER_START_X;
     }

@@ -77,9 +77,17 @@ public class MainClass extends PApplet {
                             lives.setLives(lives.getLives()-1);
                         }
                     }
+                    // check if customer reaches the end of the bar
+                    if (customers[i].getCurrentX() > Bar.getEnd()) {
+                        //kill bartender
+                        Bartender.setAlive(false);
+                        lives.setLives(lives.getLives()-1);
+                    }
                 } else {
-                    // moving forward boolean is false
+                    // moving forward boolean is false NOT sure what this does
                     if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
+                    // check if customer reaches the end of the bar
+                    // if (customers[i].getCurrentX() )
                 }
             } else {
                 // stop beers
@@ -88,7 +96,8 @@ public class MainClass extends PApplet {
 
         // make beers move
         for (String key : hashMap.keySet()) {
-            if(Bartender.getAlive()) {
+            // check if bartender is alive and beer is not collected
+            if(Bartender.getAlive() && !hashMap.get(key).getCollected()) {
                 // check if moving forward boolean is true
                 if (hashMap.get(key).getMovingForward()) {
                     hashMap.get(key).moveForward();
@@ -100,10 +109,26 @@ public class MainClass extends PApplet {
                     }
                 }
                 // moving forward boolean is false
-                else hashMap.get(key).moveBackward();
+                else {
+                    // check if bartender collides to collect glass
+                    if (hashMap.get(key).getCurrentX() + 15 > Bartender.getCurrentX() &&
+                            hashMap.get(key).getCurrentY() - 10 == Bartender.getCurrentY()){
+
+                        hashMap.get(key).setCollected(true);
+                    } else {
+                        hashMap.get(key).moveBackward();
+                    }
+                }
+            // check if beer is collected
             } else {
-                // stop beers
-                hashMap.get(key).stop();
+                if (hashMap.get(key).getCollected()){
+                    hashMap.get(key).empty();
+                    //remove beer from hashmap causes ConcurrentModificationException error?
+                    //hashMap.remove(key);
+                } else {
+                    // stop beers, bartender killed
+                    hashMap.get(key).stop();
+                }
             }
         }
 
