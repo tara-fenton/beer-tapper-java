@@ -66,6 +66,8 @@ public class MainClass extends PApplet {
         beerCount = 0;
     }
 
+    /* Interval
+     * */
     public void draw() {
 
         processing.background(0);
@@ -90,6 +92,8 @@ public class MainClass extends PApplet {
             displayGetReady();
         }
     }
+    /* Checks for win.
+     * */
     public void checkForWin() {
         // check if all customers are returning - WON LEVEL
         if (returningCustomers == customerAmount * level.getLevel()) {
@@ -98,19 +102,30 @@ public class MainClass extends PApplet {
 
         } else returningCustomers = 0;
     }
+    /* For each of the customers are moving if the bartender is alive.
+    * If the customer is moving forward then draw it orElse the customer moving backward to beginning of bar.
+    * Next check through all the beer to see if they collided with the customer. If they collided
+    * change the directions of the customer and the beer and give the player points. If the beer makes it to the
+    * of the bar kill the bartender. If the customer gets to the end of the bar kill the bartender.
+    * */
     public void makeCustomersMove(){
-        // make customers move
+        // make each customer move
         for (int i = 0; i < customerAmount * level.getLevel(); i++)
+            // check if bartender is alive
             if (Bartender.getAlive()) {
-                // check if moving forward boolean is true
+                // check if customer is moving forward is true
                 if (customers[i].getMovingForward()) {
+                    // draw customer
                     customers[i].moveForward();
 
+                    // for each beer for each customer
                     for (String key : beers.keySet()) {
                         // check if beers collide with customer
                         if (customers[i].getCurrentX() + 40 > beers.get(key).getCurrentX() &&
                                 customers[i].getCurrentY() == beers.get(key).getCurrentY() - 10) {
+                            // set customer moving to bartender false
                             customers[i].setMovingForward(false);
+                            // set  beer moving towards customer to false
                             beers.get(key).setMovingForward(false);
                             // 50 Points for each saloon patron you send off his aisle
                             points.setPoints(points.getPoints() + 50);
@@ -128,26 +143,32 @@ public class MainClass extends PApplet {
                         Bartender.setAlive(false);
                         lives.setLives(lives.getLives() - 1);
                     }
-                    // else - moving forward boolean is false, customers moving backward to beginning of bar
+                    // else - customer is moving forward is false, customers moving backward to beginning of bar
                 } else {
                     if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
                     // count the number of returning customers
                     returningCustomers++;
                 }
+                // else - the bartender died, what to do??
             } else {
                 // stop customers
                 customers[i].stop();
             }
-
-
     }
+
+    /* For each of the beers are moving if the bartender is alive and this beer is not collected.
+     * If the beer is moving forward then draw it.
+     * If the beer reaches the end without colliding with a customer kill the bartender.
+     * If bartender collides to collect glass, make the glass disappear and give the player points.
+     * */
     public void makeBeersMove() {
         // make beers move
         for (String key : beers.keySet()) {
             // check if bartender is alive and beer is not collected
             if (Bartender.getAlive() && !beers.get(key).getCollected()) {
-                // check if beer is moving forward boolean is true
+                // check if beer is moving forward is true
                 if (beers.get(key).getMovingForward()) {
+                    // draw beer
                     beers.get(key).moveForward();
                     // check if it reaches the end without colliding with customer
                     if (beers.get(key).getCurrentX() < Bar.getStartX()) {
@@ -156,7 +177,7 @@ public class MainClass extends PApplet {
                         lives.setLives(lives.getLives() - 1);
                     }
                 }
-                // beer moving forward boolean is false - going back to bartender
+                // beer moving forward is false - going back to bartender
                 else {
                     // check if bartender collides to collect glass
                     if (beers.get(key).getCurrentX() + 15 > Bartender.getCurrentX() &&
@@ -171,16 +192,17 @@ public class MainClass extends PApplet {
                         lives.setLives(lives.getLives() - 1);
                         // else - keep moving it toward the bartender
                     } else {
+                        // going back to the bartender
                         beers.get(key).moveBackward();
                     }
                 }
-                // check if beer is collected
-            } else {
-                if (beers.get(key).getCollected()) {
-                    beers.get(key).empty();
-                    //remove beer from beers causes ConcurrentModificationException error?
-                    //beers.remove(key);
 
+            } else {
+                // only happens once because of the && in the if statement
+                // check if beer is collected
+                if (beers.get(key).getCollected()) {
+                     // make beer disappear
+                    beers.get(key).empty();
                 } else {
                     // stop beers, bartender killed
                     beers.get(key).stop();
@@ -188,6 +210,9 @@ public class MainClass extends PApplet {
             }
         }
     }
+    /* In between screens
+     *
+     * */
     public void displayGetReady() {
         // draw ready to serve timer
         if (getReady.getTime() < 100){
@@ -199,7 +224,11 @@ public class MainClass extends PApplet {
         }
     }
 
-    // bartender movement - why do i have to call the class rather than the instance?
+    /* When the space bar is pressed pour a beer and send bartender to tap if needed.
+     * Up and Down moves the bartender and loops around if needed
+     * Left and Right moves the bartender with restrictions
+     * */
+    // QUESTION: why do i have to call the class rather than the instance?
     public void keyPressed() {
         // space bar
         if (key == ' ') {
@@ -250,10 +279,10 @@ public class MainClass extends PApplet {
             }
         }
     }
+
     public void keyReleased(){
         if (keyCode == UP){
 //            System.out.println("released: " + keyCode);
         }
     }
-
 }
