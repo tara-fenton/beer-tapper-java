@@ -2,8 +2,8 @@ import processing.core.PApplet;
 
 public class Beer {
 
-    private static int BEER_WIDTH = 15;
-    private static int BEER_HEIGHT = 30;
+    public static int BEER_WIDTH = 15;
+    public static int BEER_HEIGHT = 30;
     private int currentX;
     private int currentY;
     private boolean isMovingForward = true;

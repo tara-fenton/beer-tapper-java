@@ -21,6 +21,8 @@ public class MainClass extends PApplet {
     private static HashMap<String, Beer> hashMap = new HashMap<>();
     private int beerCount = 0;
 
+    private Lives lives;
+
     public void setup(){
         processing = this;
 
@@ -33,6 +35,8 @@ public class MainClass extends PApplet {
         for (int i = 0; i < 4; i++) {
             customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
         }
+
+        lives = new Lives(3);
     }
 
     public void settings() {
@@ -79,8 +83,8 @@ public class MainClass extends PApplet {
                     // check if it reaches the end without colliding with customer
                     if(hashMap.get(key).getCurrentX() < Bar.getStartX()){
                         //kill bartender
-                        System.out.println("kill bartender");
                         Bartender.setAlive(false);
+                        lives.setLives(lives.getLives()-1);
                     }
                 }
                 // moving forward boolean is false
@@ -90,6 +94,11 @@ public class MainClass extends PApplet {
                 hashMap.get(key).stop();
             }
         }
+        // lives
+        //for (int i = 0; i < lives.getLives(); i++) {
+            lives.draw();
+        //}
+
     }
 
     // bartender movement - why do i have to call the class rather than the instance?
