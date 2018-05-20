@@ -20,8 +20,8 @@ public class MainClass extends PApplet {
     private int customerAmount = 4;
     private int returningCustomers = 0;
 
-    private ConcurrentHashMap<String, Beer> hashMap = new ConcurrentHashMap<>();
-    private int beerCount = 0;
+    private ConcurrentHashMap<String, Beer> beers = new ConcurrentHashMap<>();
+    private int beerCount;
 
     private GetReady getReady;
     private Lives lives;
@@ -51,16 +51,25 @@ public class MainClass extends PApplet {
     }
 
     public void setLevelUp(){
+        level.setReady(true);
+        getReady.setTime(0);
         // make customers
         for (int i = 0; i < customerAmount*level.getLevel(); i++) {
             customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
         }
+        returningCustomers = 0;
+
+        // remove all beers
+        for (String key : beers.keySet()) {
+            beers.remove(key);
+        }
+        beerCount = 0;
     }
 
     public void draw() {
 
         processing.background(0);
-//level.setReady(true);
+
         if (!level.getReady()) {
             bar.setup();
 
@@ -74,28 +83,20 @@ public class MainClass extends PApplet {
             points.draw();
             level.draw();
 
-            // check if all customers are returning - WON LEVEL
-            if (returningCustomers == customerAmount * level.getLevel()) {
-//                level.setLevel(level.getLevel()+1);
-                level.setReady(true);
-//                returningCustomers = 0;
-                getReady.setTime(0);
-                // make new customers
-                for (int i = 0; i < customerAmount*level.getLevel(); i++) {
-                    customers[i] = new Customer(Customer.getStartX(), Bartender.getStartY() + Bar.getPadding() * i );
-                }
-                // remove all beers
-                for (String key : hashMap.keySet()) {
-                    hashMap.remove(key);
-                }
+            checkForWin();
 
-                beerCount = 0;
-
-            } else returningCustomers = 0;
         } else {
 
             displayGetReady();
         }
+    }
+    public void checkForWin() {
+        // check if all customers are returning - WON LEVEL
+        if (returningCustomers == customerAmount * level.getLevel()) {
+//                level.setLevel(level.getLevel()+1);
+            setLevelUp();
+
+        } else returningCustomers = 0;
     }
     public void makeCustomersMove(){
         // make customers move
@@ -105,17 +106,17 @@ public class MainClass extends PApplet {
                 if (customers[i].getMovingForward()) {
                     customers[i].moveForward();
 
-                    for (String key : hashMap.keySet()) {
+                    for (String key : beers.keySet()) {
                         // check if beers collide with customer
-                        if (customers[i].getCurrentX() + 40 > hashMap.get(key).getCurrentX() &&
-                                customers[i].getCurrentY() == hashMap.get(key).getCurrentY() - 10) {
+                        if (customers[i].getCurrentX() + 40 > beers.get(key).getCurrentX() &&
+                                customers[i].getCurrentY() == beers.get(key).getCurrentY() - 10) {
                             customers[i].setMovingForward(false);
-                            hashMap.get(key).setMovingForward(false);
+                            beers.get(key).setMovingForward(false);
                             // 50 Points for each saloon patron you send off his aisle
                             points.setPoints(points.getPoints() + 50);
                         }
                         // check if beer reaches the end of the bar
-                        if (hashMap.get(key).getCurrentX() > Bar.getEnd()) {
+                        if (beers.get(key).getCurrentX() > Bar.getEnd()) {
                             //kill bartender
                             Bartender.setAlive(false);
                             lives.setLives(lives.getLives() - 1);
@@ -142,14 +143,14 @@ public class MainClass extends PApplet {
     }
     public void makeBeersMove() {
         // make beers move
-        for (String key : hashMap.keySet()) {
+        for (String key : beers.keySet()) {
             // check if bartender is alive and beer is not collected
-            if (Bartender.getAlive() && !hashMap.get(key).getCollected()) {
+            if (Bartender.getAlive() && !beers.get(key).getCollected()) {
                 // check if beer is moving forward boolean is true
-                if (hashMap.get(key).getMovingForward()) {
-                    hashMap.get(key).moveForward();
+                if (beers.get(key).getMovingForward()) {
+                    beers.get(key).moveForward();
                     // check if it reaches the end without colliding with customer
-                    if (hashMap.get(key).getCurrentX() < Bar.getStartX()) {
+                    if (beers.get(key).getCurrentX() < Bar.getStartX()) {
                         //kill bartender
                         Bartender.setAlive(false);
                         lives.setLives(lives.getLives() - 1);
@@ -158,31 +159,31 @@ public class MainClass extends PApplet {
                 // beer moving forward boolean is false - going back to bartender
                 else {
                     // check if bartender collides to collect glass
-                    if (hashMap.get(key).getCurrentX() + 15 > Bartender.getCurrentX() &&
-                            hashMap.get(key).getCurrentY() - 10 == Bartender.getCurrentY()) {
-                        hashMap.get(key).setCollected(true);
+                    if (beers.get(key).getCurrentX() + 15 > Bartender.getCurrentX() &&
+                            beers.get(key).getCurrentY() - 10 == Bartender.getCurrentY()) {
+                        beers.get(key).setCollected(true);
                         // 100 Points for each empty mug you pick up
                         points.setPoints(points.getPoints() + 100);
                         // else if - check if beer reached the end of the bar without bartender collecting
-                    } else if (hashMap.get(key).getCurrentX() > Bar.getEnd()) {
+                    } else if (beers.get(key).getCurrentX() > Bar.getEnd()) {
                         //kill bartender
                         Bartender.setAlive(false);
                         lives.setLives(lives.getLives() - 1);
                         // else - keep moving it toward the bartender
                     } else {
-                        hashMap.get(key).moveBackward();
+                        beers.get(key).moveBackward();
                     }
                 }
                 // check if beer is collected
             } else {
-                if (hashMap.get(key).getCollected()) {
-                    hashMap.get(key).empty();
-                    //remove beer from hashmap causes ConcurrentModificationException error?
-                    //hashMap.remove(key);
+                if (beers.get(key).getCollected()) {
+                    beers.get(key).empty();
+                    //remove beer from beers causes ConcurrentModificationException error?
+                    //beers.remove(key);
 
                 } else {
                     // stop beers, bartender killed
-                    hashMap.get(key).stop();
+                    beers.get(key).stop();
                 }
             }
         }
@@ -205,7 +206,7 @@ public class MainClass extends PApplet {
             // check if bartender needs to get sent back to tap
             if(Bartender.getCurrentX() < Bartender.getStartX()) Bartender.setCurrentX(Bartender.getStartX());
             // create a beer
-            hashMap.put("beer"+beerCount, new Beer(Bartender.getCurrentX(),Bartender.getCurrentY()));
+            beers.put("beer"+beerCount, new Beer(Bartender.getCurrentX(),Bartender.getCurrentY()));
             beerCount++;
         }
         if (key == CODED) {
