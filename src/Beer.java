@@ -36,6 +36,13 @@ public class Beer {
         currentX = currentX + 1;
 //        }
     }
+    public void stop(){
+        // white
+        p.fill(256,256,256);
+        p.noStroke();
+        p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
+
+    }
 
     public int getCurrentX() {
         return this.currentX;

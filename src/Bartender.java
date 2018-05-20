@@ -9,6 +9,7 @@ public class Bartender {
     private static int BARTENDER_HEIGHT = 80;
     private static int currentX = BARTENDER_START_X;
     private static int currentY = BARTENDER_START_Y;
+    private static boolean isAlive = true;
 
     private static PApplet p = MainClass.processing;
 
@@ -40,6 +41,14 @@ public class Bartender {
 
     public static void setCurrentY(int y){
         currentY = y;
+    }
+
+    public static boolean getAlive() {
+        return isAlive;
+    }
+
+    public static boolean setAlive(boolean value){
+        return isAlive = value;
     }
 
 }

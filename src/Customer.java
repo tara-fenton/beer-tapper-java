@@ -32,6 +32,13 @@ public class Customer {
 
         this.currentX = this.currentX - 0.5;
     }
+    public void stop(){
+        // white
+        p.fill(256,256,256);
+        p.noStroke();
+        p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
+
+    }
     public static double getStartX(){
         return CUSTOMER_START_X;
     }
