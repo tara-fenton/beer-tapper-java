@@ -5,7 +5,6 @@ public class Lives {
     private int amount;
     private static PApplet p = MainClass.processing;
 
-
     public Lives(int amount){
         this.amount = amount;
     }
@@ -17,8 +16,8 @@ public class Lives {
             p.noStroke();
             p.rect(350 + (Beer.BEER_WIDTH + Beer.BEER_WIDTH) * i ,20,Beer.BEER_WIDTH,Beer.BEER_HEIGHT);
         }
-
     }
+
     public int getLives() {
         return this.amount;
     }

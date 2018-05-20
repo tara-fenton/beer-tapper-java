@@ -22,6 +22,7 @@ public class MainClass extends PApplet {
     private int beerCount = 0;
 
     private Lives lives;
+    private Points points;
 
     public void setup(){
         processing = this;
@@ -37,6 +38,7 @@ public class MainClass extends PApplet {
         }
 
         lives = new Lives(3);
+        points = new Points(0);
     }
 
     public void settings() {
@@ -63,6 +65,7 @@ public class MainClass extends PApplet {
                                 customers[i].getCurrentY() == hashMap.get(key).getCurrentY() - 10) {
                             customers[i].setMovingForward(false);
                             hashMap.get(key).setMovingForward(false);
+                            points.setPoints(points.getPoints()+50);
                         }
                     }
                 } else {
@@ -94,11 +97,9 @@ public class MainClass extends PApplet {
                 hashMap.get(key).stop();
             }
         }
-        // lives
-        //for (int i = 0; i < lives.getLives(); i++) {
-            lives.draw();
-        //}
 
+        lives.draw();
+        points.draw();
     }
 
     // bartender movement - why do i have to call the class rather than the instance?
