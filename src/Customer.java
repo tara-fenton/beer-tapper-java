@@ -22,9 +22,7 @@ public class Customer {
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
 
-//        if (CUSTOMER_X < 600) {
-            currentX = currentX + 0.5;
-//        }
+        this.currentX = this.currentX + 0.5;
     }
     public void moveBackward(){
         // green
@@ -32,28 +30,24 @@ public class Customer {
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
 
-        //if (CUSTOMER_X > 100) {
         this.currentX = this.currentX - 0.5;
-        //}
     }
     public static double getStartX(){
         return CUSTOMER_START_X;
     }
+
     public double getCurrentX(){
         return this.currentX;
     }
-    public double setCurrentX(double x){
-         return this.currentX = x;
+    public int getCurrentY(){
+        return currentY;
     }
 
-    public boolean isMovingForward() {
+    public boolean getMovingForward() {
         return isMovingForward;
     }
     public boolean setMovingForward(boolean value){
         return isMovingForward = value;
-    }
-    public int getCurrentY(){
-        return this.currentY;
     }
 
 

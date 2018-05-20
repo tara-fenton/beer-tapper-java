@@ -49,14 +49,18 @@ public class MainClass extends PApplet {
 
         // make customers move
         for (int i = 0; i < 4; i++)
-            if (customers[i].isMovingForward()) {
+            if (customers[i].getMovingForward()) {
                 customers[i].moveForward();
-                // make beers move
-//                for (String key : hashMap.keySet()) {
-//                    hashMap.get(key).getCurrentX();
-//                }
+                // check if beers collide with customer
+                for (String key : hashMap.keySet()) {
+                    if (customers[i].getCurrentX() + 40 > hashMap.get(key).getCurrentX() &&
+                            customers[i].getCurrentY() == hashMap.get(key).getCurrentY() - 10 ) {
+                        customers[i].setMovingForward(false);
+                        hashMap.get(key).setMovingForward(false);
+                    }
+                }
                 // so it only sets it once its less than 200
-                if (customers[i].getCurrentX() > 600) customers[i].setMovingForward(false);
+
             } else {
                 if (customers[i].getCurrentX() > Bar.getStartX()) customers[i].moveBackward();
 
@@ -64,7 +68,8 @@ public class MainClass extends PApplet {
 
         // make beers move
         for (String key : hashMap.keySet()) {
-            hashMap.get(key).draw();
+            if (hashMap.get(key).getMovingForward()) hashMap.get(key).moveForward();
+            else hashMap.get(key).moveBackward();
         }
 
     }
