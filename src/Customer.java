@@ -17,8 +17,8 @@ public class Customer {
     private static PApplet p = MainClass.processing;
 
     public void moveForward(){
-        // red
-        p.fill(256, 0, 0);
+        // blue
+        p.fill(0, 0, 256);
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
 
@@ -33,8 +33,8 @@ public class Customer {
         this.currentX = this.currentX - 0.5;
     }
     public void stop(){
-        // white
-        p.fill(256,256,256);
+        // red
+        p.fill(256,0,0);
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
 

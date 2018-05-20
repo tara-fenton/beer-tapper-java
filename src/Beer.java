@@ -37,8 +37,8 @@ public class Beer {
 //        }
     }
     public void stop(){
-        // white
-        p.fill(256,256,256);
+        // red
+        p.fill(256,0,0);
         p.noStroke();
         p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 

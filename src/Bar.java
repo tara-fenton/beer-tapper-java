@@ -24,4 +24,5 @@ public class Bar {
     public static int getStartX(){
         return BAR_START_X;
     }
+    public static int getEnd() { return BAR_START_X + BAR_WIDTH; }
 }

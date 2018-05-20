@@ -23,6 +23,7 @@ public class MainClass extends PApplet {
 
     private Lives lives;
     private Points points;
+    private Level level;
 
     public void setup(){
         processing = this;
@@ -39,6 +40,7 @@ public class MainClass extends PApplet {
 
         lives = new Lives(3);
         points = new Points(0);
+        level = new Level(1);
     }
 
     public void settings() {
@@ -59,13 +61,20 @@ public class MainClass extends PApplet {
                 // check if moving forward boolean is true
                 if (customers[i].getMovingForward()) {
                     customers[i].moveForward();
-                    // check if beers collide with customer
+
                     for (String key : hashMap.keySet()) {
+                        // check if beers collide with customer
                         if (customers[i].getCurrentX() + 40 > hashMap.get(key).getCurrentX() &&
                                 customers[i].getCurrentY() == hashMap.get(key).getCurrentY() - 10) {
                             customers[i].setMovingForward(false);
                             hashMap.get(key).setMovingForward(false);
                             points.setPoints(points.getPoints()+50);
+                        }
+                        // check if beer reaches the end of the bar
+                        if (hashMap.get(key).getCurrentX() > Bar.getEnd()) {
+                            //kill bartender
+                            Bartender.setAlive(false);
+                            lives.setLives(lives.getLives()-1);
                         }
                     }
                 } else {
@@ -100,6 +109,7 @@ public class MainClass extends PApplet {
 
         lives.draw();
         points.draw();
+        level.draw();
     }
 
     // bartender movement - why do i have to call the class rather than the instance?
