@@ -20,5 +20,8 @@ public class GameOver {
         p.text("[ INSERT QUARTER ]", 160, 360);
         p.fill(196,37,215);
     }
+//    void mouseClicked() {
+//        System.out.println("mouse clicked");
+//    }
 }
 

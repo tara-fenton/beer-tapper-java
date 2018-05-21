@@ -22,7 +22,7 @@ public class Beer {
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 
-        currentX = currentX - 3;
+        currentX = currentX - 2;
     }
 
     public void moveBackward(){
@@ -31,7 +31,7 @@ public class Beer {
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 
-        currentX = currentX + 3.5;
+        currentX = currentX + 0.5;
     }
 
     public void stop(){

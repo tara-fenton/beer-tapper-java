@@ -58,8 +58,8 @@ public class MainClass extends PApplet {
             customers.remove(key);
         }
         // used for customer speed
-        double lower = 2.01;
-        double upper = 2.34;
+        double lower = 0.01;
+        double upper = 1.34;
         // make customers
         for (int i = 0; i < customerAmount*level.getLevel(); i++) {
             // used for customer speed
@@ -115,6 +115,7 @@ public class MainClass extends PApplet {
         if (returningCustomers == customerAmount * level.getLevel()) {
             level.setLevel(level.getLevel()+1);
             setLevelUp();
+            level.setReady(false);
 
         } else returningCustomers = 0;
     }
@@ -169,9 +170,10 @@ public class MainClass extends PApplet {
                 // else - the bartender died, what to do??
             } else {
                 // stop customers
-                customers.get(customer).stop();
+                // customers.get(customer).stop();
                 setLevelUp();
-                displayGetReady();
+                level.setReady(true);
+                //displayGetReady();
             }
     }
 
@@ -219,8 +221,8 @@ public class MainClass extends PApplet {
                         beers.get(key).moveBackward();
                     }
                 }
-
-            } else {
+                // make sure bartender is alive to fix freezing bug
+            } else if (Bartender.getAlive()) {
                 // only happens once because of the && in the if statement
                 // check if beer is collected
                 if (beers.get(key).getCollected()) {
@@ -230,7 +232,8 @@ public class MainClass extends PApplet {
                     // stop beers, bartender killed
                     beers.get(key).stop();
                     setLevelUp();
-                    displayGetReady();
+                    level.setReady(true);
+                    // displayGetReady();
                 }
             }
         }
