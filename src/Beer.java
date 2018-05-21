@@ -4,14 +4,14 @@ public class Beer {
 
     public static int BEER_WIDTH = 15;
     public static int BEER_HEIGHT = 30;
-    private int currentX;
+    public double currentX;
     private int currentY;
     private boolean isMovingForward = true;
     private boolean isCollected = false;
 
     private static PApplet p = MainClass.processing;
 
-    public Beer(int x, int y){
+    public Beer(double x, int y){
         currentX = x - 20;
         currentY = y + 10;
     }
@@ -20,25 +20,25 @@ public class Beer {
         // yellow
         p.fill(252,252,0);
         p.noStroke();
-        p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
+        p.rect((int) this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 
-        currentX = currentX - 1;
+        currentX = currentX - 3;
     }
 
     public void moveBackward(){
         // white
         p.fill(256,256,256);
         p.noStroke();
-        p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
+        p.rect((int) this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
 
-        currentX = currentX + 1;
+        currentX = currentX + 3.5;
     }
 
     public void stop(){
         // red
         p.fill(256,0,0);
         p.noStroke();
-        p.rect(this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
+        p.rect((int) this.currentX,this.currentY,BEER_WIDTH,BEER_HEIGHT);
     }
 
     public void empty(){
@@ -46,7 +46,7 @@ public class Beer {
         p.rect(0,0,0,0);
     }
 
-    public int getCurrentX() {
+    public double getCurrentX() {
         return this.currentX;
     }
     public int getCurrentY() {

@@ -2,16 +2,18 @@ import processing.core.PApplet;
 
 public class Customer {
 
-    private static double CUSTOMER_START_X = 140;
+    private static double CUSTOMER_START_X = 170;
     private int CUSTOMER_WIDTH = 40;
     private int CUSTOMER_HEIGHT = 80;
     private double currentX;
     private int currentY;
+    private double speed;
     private boolean isMovingForward = true;
 
-    public Customer(double x, int y){
+    public Customer(double x, int y, double s){
         currentX = x;
         currentY = y;
+        speed = s;
     }
 
     private static PApplet p = MainClass.processing;
@@ -22,7 +24,7 @@ public class Customer {
         p.noStroke();
         p.rect((int) this.currentX,this.currentY,CUSTOMER_WIDTH,CUSTOMER_HEIGHT);
 
-        this.currentX = this.currentX + 0.5;
+        this.currentX = this.currentX + this.speed;
     }
 
     public void moveBackward(){

@@ -17,6 +17,7 @@ public class MainClass extends PApplet {
     private Bar bar;
     private Bartender bartender;
     private ConcurrentHashMap<String, Customer> customers = new ConcurrentHashMap<>();
+    private int customerCounter = 0;
     private int customerAmount = 4;
     private int returningCustomers = 0;
 
@@ -27,6 +28,7 @@ public class MainClass extends PApplet {
     private Lives lives;
     private Points points;
     private Level level;
+    private GameOver gameOver;
 
     public void settings() {
         size(800, 600);
@@ -51,17 +53,32 @@ public class MainClass extends PApplet {
     public void setLevelUp(){
         level.setReady(true);
         getReady.setTime(0);
+        // remove all customers
+        for (String key : customers.keySet()) {
+            customers.remove(key);
+        }
+        // used for customer speed
+        double lower = 2.01;
+        double upper = 2.34;
         // make customers
         for (int i = 0; i < customerAmount*level.getLevel(); i++) {
+            // used for customer speed
+            double result = Math.random() * (upper - lower) + lower;
+
             customers.put("customers"+i, new Customer(Customer.getStartX(),
-                    Bartender.getStartY() + Bar.getPadding() * i ));
+                    Bartender.getStartY() + Bar.getPadding() * customerCounter, result ));
+            customerCounter++;
+            // check if customerCounter needs to be reset
+            if (customerCounter >= customerAmount) customerCounter = 0;
         }
+        // reset returning customers
         returningCustomers = 0;
 
         // remove all beers
         for (String key : beers.keySet()) {
             beers.remove(key);
         }
+        // reset beer count
         beerCount = 0;
     }
 
@@ -96,7 +113,7 @@ public class MainClass extends PApplet {
     public void checkForWin() {
         // check if all customers are returning - WON LEVEL
         if (returningCustomers == customerAmount * level.getLevel()) {
-//                level.setLevel(level.getLevel()+1);
+            level.setLevel(level.getLevel()+1);
             setLevelUp();
 
         } else returningCustomers = 0;
@@ -153,6 +170,8 @@ public class MainClass extends PApplet {
             } else {
                 // stop customers
                 customers.get(customer).stop();
+                setLevelUp();
+                displayGetReady();
             }
     }
 
@@ -175,6 +194,7 @@ public class MainClass extends PApplet {
                         //kill bartender
                         Bartender.setAlive(false);
                         lives.setLives(lives.getLives() - 1);
+                        //displayGetReady();
                     }
                 }
                 // beer moving forward is false - going back to bartender
@@ -188,8 +208,11 @@ public class MainClass extends PApplet {
                         // else if - check if beer reached the end of the bar without bartender collecting
                     } else if (beers.get(key).getCurrentX() > Bar.getEnd()) {
                         //kill bartender
+                        System.out.println("kill bartender");
                         Bartender.setAlive(false);
                         lives.setLives(lives.getLives() - 1);
+                        //getReady.setTime(0);
+                        //displayGetReady();
                         // else - keep moving it toward the bartender
                     } else {
                         // going back to the bartender
@@ -206,6 +229,8 @@ public class MainClass extends PApplet {
                 } else {
                     // stop beers, bartender killed
                     beers.get(key).stop();
+                    setLevelUp();
+                    displayGetReady();
                 }
             }
         }
@@ -214,14 +239,28 @@ public class MainClass extends PApplet {
      *
      * */
     public void displayGetReady() {
-        // draw ready to serve timer
-        if (getReady.getTime() < 100){
-            getReady.draw();
-            getReady.setTime(getReady.getTime()+1);
-        } else {
-            level.setReady(false);
-            returningCustomers = 0;
+        // check if bartender is alive
+        if (!Bartender.getAlive() && lives.getLives() != 0) {
+            if (getReady.getTime() < 50){
+                System.out.println(getReady.getTime());
+                // getReady.draw();
+                getReady.setTime(getReady.getTime()+1);
+            } else if (getReady.getTime() < 130){
+                // draw ready to serve timer
+                getReady.draw();
+                getReady.setTime(getReady.getTime()+1);
+            } else {
+                level.setReady(false);
+                getReady.setTime(0);
+                Bartender.setAlive(true);
+            }
         }
+        if (lives.getLives() <= 0){
+            gameOver = new GameOver();
+            gameOver.draw();
+            // lives.setLives(3);
+        }
+
     }
 
     /* When the space bar is pressed pour a beer and send bartender to tap if needed.
@@ -235,7 +274,7 @@ public class MainClass extends PApplet {
             // check if bartender needs to get sent back to tap
             if(Bartender.getCurrentX() < Bartender.getStartX()) Bartender.setCurrentX(Bartender.getStartX());
             // create a beer
-            beers.put("beer"+beerCount, new Beer(Bartender.getCurrentX(),Bartender.getCurrentY()));
+            beers.put("beer"+beerCount, new Beer((double) Bartender.getCurrentX(),Bartender.getCurrentY()));
             beerCount++;
         }
         if (key == CODED) {

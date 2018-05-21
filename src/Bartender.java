@@ -9,7 +9,7 @@ public class Bartender {
     private static int BARTENDER_HEIGHT = 80;
     private static int currentX = BARTENDER_START_X;
     private static int currentY = BARTENDER_START_Y;
-    private static boolean isAlive = true;
+    private static boolean isAlive = false;
 
     private static PApplet p = MainClass.processing;
 
