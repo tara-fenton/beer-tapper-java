@@ -14,7 +14,7 @@ public class Lives {
         for (int i = 0; i < this.amount; i++) {
             p.fill(252,252,0);
             p.noStroke();
-            p.rect(350 + (Beer.BEER_WIDTH + Beer.BEER_WIDTH) * i ,20,Beer.BEER_WIDTH,Beer.BEER_HEIGHT);
+            p.rect(350 + (Beer.BEER_WIDTH + Beer.BEER_WIDTH) * i ,20, Beer.BEER_WIDTH,Beer.BEER_HEIGHT);
         }
     }
 

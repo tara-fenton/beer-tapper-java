@@ -3,7 +3,7 @@ import processing.core.PApplet;
 public class Level {
 
     private int amount;
-    private boolean isReady = false;
+    private boolean isPlaying = false;
 
     private static PApplet p = MainClass.processing;
 
@@ -24,10 +24,10 @@ public class Level {
         return this.amount = n;
     }
 
-    public boolean getReady() {
-        return isReady;
+    public boolean getIsPlaying() {
+        return isPlaying;
     }
-    public boolean setReady(boolean value){
-        return isReady = value;
+    public boolean setIsPlaying(boolean value){
+        return isPlaying = value;
     }
 }

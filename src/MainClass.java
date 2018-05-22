@@ -1,21 +1,23 @@
-import processing.core.PApplet;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.awt.Event.CAPS_LOCK;
 
+import processing.core.PApplet;
+
 public class MainClass extends PApplet {
 
     //reference to processing
     public static PApplet processing;
-    private static int downLimit;
 
     public static void main(String [] args) {
         PApplet.main("MainClass", args);
     }
 
+
     private Bar bar;
     private Bartender bartender;
+    private static int downLimit;
     private ConcurrentHashMap<String, Customer> customers = new ConcurrentHashMap<>();
     private int customerCounter = 0;
     private int customerAmount = 4;
@@ -48,10 +50,11 @@ public class MainClass extends PApplet {
         level = new Level(1);
 
         setLevelUp();
+        level.setIsPlaying(true);
     }
 
     public void setLevelUp(){
-        level.setReady(true);
+        // level.setReady(true);
         getReady.setTime(0);
         // remove all customers
         for (String key : customers.keySet()) {
@@ -88,7 +91,7 @@ public class MainClass extends PApplet {
 
         processing.background(0);
 
-        if (!level.getReady()) {
+        if (!level.getIsPlaying()) {
             bar.setup();
 
             bartender.draw();
@@ -115,7 +118,7 @@ public class MainClass extends PApplet {
         if (returningCustomers == customerAmount * level.getLevel()) {
             level.setLevel(level.getLevel()+1);
             setLevelUp();
-            level.setReady(false);
+            level.setIsPlaying(false);
 
         } else returningCustomers = 0;
     }
@@ -172,7 +175,7 @@ public class MainClass extends PApplet {
                 // stop customers
                 // customers.get(customer).stop();
                 setLevelUp();
-                level.setReady(true);
+                level.setIsPlaying(true);
                 //displayGetReady();
             }
     }
@@ -232,7 +235,7 @@ public class MainClass extends PApplet {
                     // stop beers, bartender killed
                     beers.get(key).stop();
                     setLevelUp();
-                    level.setReady(true);
+                    level.setIsPlaying(true);
                     // displayGetReady();
                 }
             }
@@ -245,7 +248,7 @@ public class MainClass extends PApplet {
         // check if bartender is alive
         if (!Bartender.getAlive() && lives.getLives() != 0) {
             if (getReady.getTime() < 50){
-                System.out.println(getReady.getTime());
+//                System.out.println(getReady.getTime());
                 // getReady.draw();
                 getReady.setTime(getReady.getTime()+1);
             } else if (getReady.getTime() < 130){
@@ -253,7 +256,7 @@ public class MainClass extends PApplet {
                 getReady.draw();
                 getReady.setTime(getReady.getTime()+1);
             } else {
-                level.setReady(false);
+                level.setIsPlaying(false);
                 getReady.setTime(0);
                 Bartender.setAlive(true);
             }
@@ -270,7 +273,6 @@ public class MainClass extends PApplet {
      * Up and Down moves the bartender and loops around if needed
      * Left and Right moves the bartender with restrictions
      * */
-    // QUESTION: why do i have to call the class rather than the instance?
     public void keyPressed() {
         // space bar
         if (key == ' ') {
